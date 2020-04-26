@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="GrooveMusicClone.MusicPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:ff2="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+    xmlns:ffsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:transformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+    Title="Songs"
+    BackgroundColor="Black"
+    mc:Ignorable="d">
+    <ContentPage.Content>
+        <StackLayout Padding="0,15,0,0">
+            <StackLayout Padding="15,0,15,0" Orientation="Horizontal">
+                <Label
+                    FontFamily="OpenSans-Regular"
+                    Text="Refine : "
+                    TextColor="White" />
+                <Label
+                    FontFamily="OpenSans-Regular"
+                    Text="Date Added"
+                    TextColor="Yellow" />
+            </StackLayout>
+            <StackLayout
+                Margin="15,15,15,0"
+                Orientation="Horizontal"
+                Spacing="10">
+                <ffsvg:SvgCachedImage HeightRequest="10" Source="musicplayer.svg" />
+                <Label
+                    FontFamily="OpenSans-Regular"
+                    Text="Shuffle All"
+                    TextColor="White" />
+            </StackLayout>
+
+            <CollectionView
+                x:Name="MainCollectionView"
+                Margin="15,5,15,0"
+                SelectionChanged="MainCollectionView_SelectionChanged"
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Grid
+                            Padding="0,10,0,10"
+                            BackgroundColor="Black"
+                            ColumnSpacing="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="7*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                FontFamily="OpenSans-Regular"
+                                Text="{Binding Title}"
+                                TextColor="White" />
+                            <ScrollView
+                                x:Name="MainScrollView"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Orientation="Horizontal">
+                                <StackLayout Orientation="Horizontal">
+                                    <Label
+                                        x:Name="Lab1"
+                                        FontFamily="OpenSans-Regular"
+                                        Text="{Binding Album}"
+                                        TextColor="White" />
+                                    <Label
+                                        FontFamily="OpenSans-Regular"
+                                        Text="  -  "
+                                        TextColor="White" />
+                                    <Label
+                                        x:Name="Lab2"
+                                        FontFamily="OpenSans-Regular"
+                                        Text="{Binding Artist}"
+                                        TextColor="White" />
+                                </StackLayout>
+                            </ScrollView>
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="1"
+                                FontFamily="OpenSans-Regular"
+                                Text="{Binding Duration}"
+                                TextColor="White"
+                                VerticalOptions="Center" />
+                            <Image Source="{Binding imageSource}" />
+                        </Grid>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+
+
+
+            <Grid
+                x:Name="ControlGrid"
+                Padding="0"
+                RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ff2:CachedImage
+                    x:Name="BackImage"
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Aspect="AspectFill"
+                    HeightRequest="110"
+                    HorizontalOptions="FillAndExpand"
+                    Source="Search.png"
+                    VerticalOptions="EndAndExpand">
+
+                    <ff2:CachedImage.Transformations>
+                        <transformations:BlurredTransformation Radius="30" />
+                    </ff2:CachedImage.Transformations>
+                </ff2:CachedImage>
+                <BoxView
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    BackgroundColor="Black"
+                    HorizontalOptions="FillAndExpand"
+                    Opacity=".7"
+                    VerticalOptions="FillAndExpand" />
+
+                <StackLayout
+                    x:Name="ControlsLayout"
+                    Padding="20,12,20,0"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="EndAndExpand">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="NavigatePage" />
+                    </StackLayout.GestureRecognizers>
+
+                    <Label
+                        x:Name="TitleLabel"
+                        FontFamily="OpenSans-Regular"
+                        FontSize="20"
+                        Text="Now Playing"
+                        TextColor="White" />
+
+
+                    <StackLayout Orientation="Horizontal">
+                        <Label
+                            x:Name="ElapsedLabel"
+                            FontFamily="OpenSans-Regular"
+                            Text="na:na"
+                            TextColor="White" />
+                        <Slider
+                            x:Name="MainSlider"
+                            HorizontalOptions="FillAndExpand"
+                            MaximumTrackColor="#DCDCDC"
+                            MinimumTrackColor="White"
+                            ThumbColor="White"
+                            ValueChanged="MainSlider_ValueChanged"
+                            Value="0" />
+                        <Label
+                            x:Name="TotalLabel"
+                            FontFamily="OpenSans-Regular"
+                            Text="na:na"
+                            TextColor="White" />
+                    </StackLayout>
+
+
+
+                </StackLayout>
+
+                <StackLayout
+                    Grid.Row="1"
+                    Padding="5,2,5,2"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Horizontal"
+                    Spacing="0"
+                    VerticalOptions="End">
+                    <Grid Padding="15,15,15,15">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="Previous" />
+                        </Grid.GestureRecognizers>
+                        <ffsvg:SvgCachedImage HeightRequest="15" Source="Previous.svg" />
+                    </Grid>
+                    <Grid Padding="15">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="PlayTapped" />
+                        </Grid.GestureRecognizers>
+                        <ffsvg:SvgCachedImage
+                            x:Name="PlayPauseSvg"
+                            HeightRequest="15"
+                            Source="Pause.svg" />
+                    </Grid>
+                    <Grid Padding="15">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="Next" />
+                        </Grid.GestureRecognizers>
+                        <ffsvg:SvgCachedImage HeightRequest="15" Source="Next.svg" />
+                    </Grid>
+
+
+                    <Grid Padding="3">
+                        <BoxView
+                            x:Name="ShufleBox"
+                            BackgroundColor="Gray"
+                            CornerRadius="20"
+                            HorizontalOptions="Center"
+                            IsVisible="False"
+                            Opacity=".5"
+                            VerticalOptions="Center" />
+                        <ffsvg:SvgCachedImage
+                            Margin="13"
+                            HeightRequest="14"
+                            Source="Shuffle.svg">
+                            <ffsvg:SvgCachedImage.GestureRecognizers>
+                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="Shuffle" />
+                            </ffsvg:SvgCachedImage.GestureRecognizers>
+                        </ffsvg:SvgCachedImage>
+                    </Grid>
+                    <Grid Padding="3" VerticalOptions="Center">
+                        <BoxView
+                            x:Name="RepeatBox"
+                            BackgroundColor="Gray"
+                            CornerRadius="20"
+                            IsVisible="False"
+                            Opacity=".5"
+                            VerticalOptions="Center" />
+
+                        <ffsvg:SvgCachedImage
+                            Margin="12"
+                            HeightRequest="15"
+                            Source="repeat.svg">
+                            <ffsvg:SvgCachedImage.GestureRecognizers>
+                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="Repeat" />
+                            </ffsvg:SvgCachedImage.GestureRecognizers>
+                        </ffsvg:SvgCachedImage>
+                    </Grid>
+                    <Label
+                        Padding="15"
+                        FontFamily="OpenSans-Regular"
+                        HorizontalOptions="Center"
+                        Text="Test"
+                        TextColor="White">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="Button_Clicked_1" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                </StackLayout>
+            </Grid>
+
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
