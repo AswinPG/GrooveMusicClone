@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using FFImageLoading.Forms.Platform;
+using MediaManager;
 
 namespace GrooveMusicClone.Droid
 {
@@ -20,6 +21,7 @@ namespace GrooveMusicClone.Droid
 
             base.OnCreate(savedInstanceState);
             CachedImageRenderer.Init(true);
+            CrossMediaManager.Current.Init(this);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());

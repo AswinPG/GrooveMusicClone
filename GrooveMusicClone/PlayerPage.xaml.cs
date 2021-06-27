@@ -1,4 +1,5 @@
 ﻿using GrooveMusicClone.Models;
+using MediaManager;
 using Plugin.SimpleAudioPlayer;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ namespace GrooveMusicClone
         private int x;
         private int Songindex;
         public List<Song> Songs = new List<Song> { };
-        public ISimpleAudioPlayer player;
+        //public ISimpleAudioPlayer player;
         public double Duration;
         Stopwatch stopwatch { get; set; }
 
@@ -43,6 +44,9 @@ namespace GrooveMusicClone
         public PlayerPage(int songindex, ObservableCollection<Song> songList)
         {
             InitializeComponent();
+            PlayTapped(null, null);
+            CrossMediaManager.Current.PositionChanged += Current_PositionChanged;
+            CrossMediaManager.Current.StateChanged += Current_StateChanged;
             //PauseSkip = false;
             TotalCount = songList.Count();
             Songindex = songindex;
@@ -76,13 +80,13 @@ namespace GrooveMusicClone
             ArtistLabel.Text = song.Artist;
             TotalLabel.Text = song.Duration.ToString();
             TotTime = song.Duration.ToString();
-            QueueData.Player = this;
-            QueueData.CurrentList = Songs;
-            player = QueueData.player;
+            //QueueData.Player = this;
+            //QueueData.CurrentList = Songs;
+            //player = QueueData.player;
             //player = CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
-            player.Load(GetStreamFromFile(song.Path));
+            //player.Load(GetStreamFromFile(song.Path));
 
-            PlayTapped(null,null);
+            
             LoadView();
             Pausedornot = false;
             Pausetime = new TimeSpan(0, 0, 0);
@@ -92,6 +96,18 @@ namespace GrooveMusicClone
             stopwatch = new Stopwatch();
 
         }
+
+        private void Current_StateChanged(object sender, MediaManager.Playback.StateChangedEventArgs e)
+        {
+            if(CrossMediaManager.Current.State == MediaManager.Player.MediaPlayerState.Playing)
+                MainSlider.Maximum = CrossMediaManager.Current.Duration.TotalMilliseconds;
+        }
+
+        private void Current_PositionChanged(object sender, MediaManager.Playback.PositionChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         Stream GetStreamFromFile(string filename)
         {
 
@@ -107,31 +123,31 @@ namespace GrooveMusicClone
 
             Device.BeginInvokeOnMainThread(() =>
             {
-                ElapsedLabel.Text = new TimeSpan(0, 0, (int)player.CurrentPosition).ToString().Substring(4, 4);
+                ElapsedLabel.Text = CrossMediaManager.Current.Position.ToString().Substring(4, 4);
             });
 
 
             MainSlider.ValueChanged -= SliderPostionValueChanged;
-            MainSlider.Value = player.CurrentPosition;
+            MainSlider.Value = CrossMediaManager.Current.Position.TotalMilliseconds;
             MainSlider.ValueChanged += SliderPostionValueChanged;
 
-            return player.IsPlaying;
+            return CrossMediaManager.Current.IsPlaying();
         }
 
         public void SliderPostionValueChanged(object sender, ValueChangedEventArgs e)
         {
-            if (MainSlider.Value != player.Duration)
-                player.Seek(MainSlider.Value);
+            if (MainSlider.Value != CrossMediaManager.Current.Duration.TotalMilliseconds)
+                CrossMediaManager.Current.SeekTo(new TimeSpan(0, 0, Convert.ToInt32(MainSlider.Value / 1000)));
         }
 
 
-        public void PreviousTapped(object sender, EventArgs e)
+        public async void PreviousTapped(object sender, EventArgs e)
         {
             try
             {
 
                 Current--;
-                player.Load(GetStreamFromFile(Songs[Current].Path));
+                await CrossMediaManager.Current.Play(Songs[Current].Path);
                 PlayTapped(null, null);
                 LoadView();
                     
@@ -144,12 +160,12 @@ namespace GrooveMusicClone
             }
 
         }
-        public void PlayPreviousitem()
+        public async void PlayPreviousitem()
         {
             try
             {
                 Current--;
-                player.Load(GetStreamFromFile(Songs[Current].Path));
+                await CrossMediaManager.Current.Play(Songs[Current].Path);
                 PlayTapped(null, null);
                 LoadView();
             }
@@ -167,7 +183,7 @@ namespace GrooveMusicClone
                 //await CrossMediaManager.Current.Play();
                 await Task.Delay(500);
                 Current++;
-                player.Load(GetStreamFromFile(Songs[Current].Path));
+                await CrossMediaManager.Current.Play(Songs[Current].Path);
                 PlayTapped(null, null);
                 
                 LoadView();
@@ -183,22 +199,22 @@ namespace GrooveMusicClone
         }
         public async void PlayTapped(object sender, EventArgs e)
         {
-            if (player.IsPlaying)
+            if (CrossMediaManager.Current.IsPlaying())
             {
                 PlayPauseSvg.Source = "Play.svg";
 
-                player.Pause();
+                await CrossMediaManager.Current.Pause();
             }
 
             else
             {
                 PlayPauseSvg.Source = "Pause.svg";
-                player.Play();
+                await CrossMediaManager.Current.Play();
 
-                MainSlider.Maximum = player.Duration;
-                Duration = player.Duration;
+                
+                Duration = CrossMediaManager.Current.Duration.TotalMilliseconds;
                 Populate(Current);
-                Device.StartTimer(TimeSpan.FromSeconds(0.5), UpdatePosition);
+                //Device.StartTimer(TimeSpan.FromSeconds(0.5), UpdatePosition);
 
 
             }
@@ -268,7 +284,7 @@ namespace GrooveMusicClone
             MainGrid.TranslationX = 0;
             MainGrid.TranslateTo(0, 0);
             ControlsLayout.TranslateTo(0, 0);
-            bool c = await AwaiterF();
+            await Task.Delay(400);
             MainGrid2.TranslationX = Application.Current.MainPage.Width;
             MainGrid1.TranslationX = -(Application.Current.MainPage.Width);
             MainGrid.IsVisible = true;
@@ -282,11 +298,11 @@ namespace GrooveMusicClone
             //CollectionStack.TranslationY = Application.Current.MainPage.Height;
             await MainGrid.TranslateTo(0, 0);
         }
-        public async Task<bool> AwaiterF()
-        {
-            await Task.Delay(400);
-            return true;
-        }
+        //public async Task<bool> AwaiterF()
+        //{
+        //    await Task.Delay(400);
+        //    return true;
+        //}
         public async void LoadView()
         {
             await Task.Delay(700);
@@ -388,7 +404,7 @@ namespace GrooveMusicClone
             //}
             //int index = Math.Abs(TotalCount % (((Song)e.CurrentSelection[0]).Index + Songindex + 1) - 1);
             Current = ((Song)e.CurrentSelection[0]).Index;
-            player.Load(GetStreamFromFile(Songs[Current].Path));
+            await CrossMediaManager.Current.Play(Songs[Current].Path);
             PlayTapped(null, null);
             Populate(Current);
             LoadView();

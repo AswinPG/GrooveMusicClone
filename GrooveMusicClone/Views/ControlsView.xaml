@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Grid
+    x:Class="GrooveMusicClone.Views.ControlsView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ffsvg="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+    xmlns:transformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+    xmlns:views="clr-namespace:GrooveMusicClone.Views"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+    x:Name="ControlsLayout"
+    x:DataType="views:ControlsViewModel"
+    HorizontalOptions="FillAndExpand"
+    VerticalOptions="EndAndExpand">
+    <Grid.Resources>
+        <ResourceDictionary>
+            <xct:FadeAnimation x:Key="FadeAnim" Duration="100" />
+        </ResourceDictionary>
+    </Grid.Resources>
+    <ffsvg:CachedImage
+        Aspect="AspectFill"
+        HeightRequest="{Binding Source={x:Reference MainStack}, Path=Height}"
+        HorizontalOptions="FillAndExpand"
+        Source="{Binding AlbumArt}"
+        VerticalOptions="FillAndExpand">
+        <ffsvg:CachedImage.Transformations>
+            <transformations:BlurredTransformation Radius="30" />
+        </ffsvg:CachedImage.Transformations>
+    </ffsvg:CachedImage>
+    <BoxView
+        BackgroundColor="{AppThemeBinding Dark=Black,
+                                          Light=White,
+                                          Default=White}"
+        HorizontalOptions="FillAndExpand"
+        Opacity=".55"
+        VerticalOptions="FillAndExpand" />
+    <StackLayout
+        x:Name="MainStack"
+        Padding="20,10,20,0"
+        VerticalOptions="EndAndExpand">
+        <Label
+            x:Name="TitleLabel"
+            FontSize="18"
+            Text="{Binding Title}"
+            TextColor="White">
+            <VisualElement.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference ControlsLayout}, Path=IsOnPlayer}"
+                    TargetType="Label"
+                    Value="False">
+                    <Setter Property="FontSize" Value="16" />
+                </DataTrigger>
+            </VisualElement.Triggers>
+        </Label>
+        <ScrollView Orientation="Horizontal">
+            <VisualElement.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference ControlsLayout}, Path=IsOnPlayer}"
+                    TargetType="ScrollView"
+                    Value="False">
+                    <Setter Property="IsVisible" Value="False" />
+                </DataTrigger>
+            </VisualElement.Triggers>
+            <StackLayout Orientation="Horizontal">
+                <Label
+                    x:Name="AlbumLabel"
+                    FontSize="14"
+                    Text="{Binding Album}"
+                    TextColor="White" />
+                <Label
+                    FontSize="14"
+                    Text="  -  "
+                    TextColor="White" />
+                <Label
+                    x:Name="ArtistLabel"
+                    FontSize="16"
+                    Text="{Binding Artist}"
+                    TextColor="White" />
+            </StackLayout>
+        </ScrollView>
+
+        <StackLayout Orientation="Horizontal">
+            <!--<VisualElement.Triggers>
+            <DataTrigger
+                Binding="{Binding Source={x:Reference ControlsLayout}, Path=IsOnPlayer}"
+                TargetType="StackLayout"
+                Value="False">
+                <Setter Property="IsVisible" Value="False" />
+            </DataTrigger>
+        </VisualElement.Triggers>-->
+            <Label
+                x:Name="ElapsedLabel"
+                Text="{Binding CurrentPositionString}"
+                TextColor="White" />
+            <Slider
+                x:Name="MainSlider"
+                DragCompleted="MainSlider_DragCompleted"
+                HorizontalOptions="FillAndExpand"
+                Maximum="{Binding DurationInSeconds}"
+                MaximumTrackColor="#DCDCDC"
+                MinimumTrackColor="White"
+                ThumbColor="White"
+                Value="{Binding CurrentPosition}" />
+            <Label
+                x:Name="TotalLabel"
+                Text="{Binding Duration}"
+                TextColor="White" />
+
+        </StackLayout>
+        <StackLayout
+            Padding="0,0,0,10"
+            HorizontalOptions="FillAndExpand"
+            Orientation="Horizontal"
+            VerticalOptions="End">
+            <!--<VisualElement.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference ControlsLayout}, Path=IsOnPlayer}"
+                    TargetType="StackLayout"
+                    Value="False">
+                    <Setter Property="Padding" Value="0,0,0,20" />
+                </DataTrigger>
+            </VisualElement.Triggers>-->
+            <ImageButton Command="{Binding PlayPreviousCommand}" Source="Previous.png">
+                <ImageButton.Behaviors>
+                    <xct:AnimationBehavior AnimationType="{StaticResource FadeAnim}" EventName="Clicked" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+            <ImageButton
+                x:Name="PlayPauseSvg"
+                Command="{Binding PlayOrPauseCommand}"
+                Source="Pause.png">
+                <ImageButton.Triggers>
+                    <DataTrigger
+                        Binding="{Binding Playing}"
+                        TargetType="ImageButton"
+                        Value="false">
+                        <Setter Property="Source" Value="play.png" />
+                    </DataTrigger>
+                </ImageButton.Triggers>
+                <ImageButton.Behaviors>
+                    <xct:AnimationBehavior AnimationType="{StaticResource FadeAnim}" EventName="Clicked" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+            <ImageButton Command="{Binding PlayNextCommand}" Source="Next.png">
+                <ImageButton.Behaviors>
+                    <xct:AnimationBehavior AnimationType="{StaticResource FadeAnim}" EventName="Clicked" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+            <ImageButton
+                Command="{Binding ShuffleCommand}"
+                CornerRadius="20"
+                Source="Shuffle.png">
+                <ImageButton.Triggers>
+                    <DataTrigger
+                        Binding="{Binding Shuffle}"
+                        TargetType="ImageButton"
+                        Value="All">
+                        <Setter Property="BackgroundColor" Value="DarkGray" />
+                    </DataTrigger>
+                </ImageButton.Triggers>
+                <ImageButton.Behaviors>
+                    <xct:AnimationBehavior AnimationType="{StaticResource FadeAnim}" EventName="Clicked" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+            <ImageButton
+                Command="{Binding RepeatCommand}"
+                CornerRadius="20"
+                Source="repeat.png">
+                <ImageButton.Triggers>
+
+                    <DataTrigger
+                        Binding="{Binding Repeat}"
+                        TargetType="ImageButton"
+                        Value="All">
+                        <Setter Property="BackgroundColor" Value="DarkGray" />
+                    </DataTrigger>
+                    <DataTrigger
+                        Binding="{Binding Repeat}"
+                        TargetType="ImageButton"
+                        Value="One">
+                        <Setter Property="BackgroundColor" Value="Red" />
+                    </DataTrigger>
+                </ImageButton.Triggers>
+                <ImageButton.Behaviors>
+                    <xct:AnimationBehavior AnimationType="{StaticResource FadeAnim}" EventName="Clicked" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+        </StackLayout>
+
+        <ImageButton
+            x:Name="UpSvg"
+            HeightRequest="35"
+            Source="Up.png">
+            <VisualElement.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference ControlsLayout}, Path=IsOnPlayer}"
+                    TargetType="ImageButton"
+                    Value="False">
+                    <Setter Property="IsVisible" Value="False" />
+                </DataTrigger>
+            </VisualElement.Triggers>
+            <ImageButton.Behaviors>
+                <xct:AnimationBehavior AnimationType="{StaticResource FadeAnim}" EventName="Clicked" />
+            </ImageButton.Behaviors>
+        </ImageButton>
+    </StackLayout>
+
+
+</Grid>

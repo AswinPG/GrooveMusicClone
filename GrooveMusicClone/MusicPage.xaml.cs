@@ -12,6 +12,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using System.Collections.ObjectModel;
+using MediaManager;
 
 namespace GrooveMusicClone
 {
@@ -164,8 +165,8 @@ namespace GrooveMusicClone
 
         private void MainSlider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
-            if (MainSlider.Value != QueueData.Player.player.Duration)
-                QueueData.Player.player.Seek(MainSlider.Value);
+            if (MainSlider.Value != CrossMediaManager.Current.Duration.TotalMilliseconds)
+                CrossMediaManager.Current.SeekTo(new TimeSpan(0, 0, Convert.ToInt32(MainSlider.Value / 1000)));
         }
         public bool UpdatePosition()
         {
@@ -175,7 +176,7 @@ namespace GrooveMusicClone
                 {
                     try
                     {
-                        ElapsedLabel.Text = new TimeSpan(0, 0, (int)QueueData.Player.player.CurrentPosition).ToString().Substring(4, 4);
+                        ElapsedLabel.Text = CrossMediaManager.Current.Position.ToString().Substring(4, 4);
 
                     }
                     catch(Exception n) { }
@@ -183,10 +184,10 @@ namespace GrooveMusicClone
 
 
                 MainSlider.ValueChanged -= MainSlider_ValueChanged;
-                MainSlider.Value = QueueData.Player.player.CurrentPosition;
+                MainSlider.Value = CrossMediaManager.Current.Position.TotalMilliseconds;
                 MainSlider.ValueChanged += MainSlider_ValueChanged;
 
-                return QueueData.Player.player.IsPlaying;
+                return CrossMediaManager.Current.IsPlaying();
             }
             catch (Exception y)
             {
@@ -210,17 +211,17 @@ namespace GrooveMusicClone
 
         public async void PlayTapped(object sender, EventArgs e)
         {
-            if (QueueData.Player.player.IsPlaying)
+            if (CrossMediaManager.Current.IsPlaying())
             {
                 PlayPauseSvg.Source = "Play.svg";
 
-                QueueData.Player.player.Pause();
+                await CrossMediaManager.Current.Pause();
             }
 
             else
             {
                 PlayPauseSvg.Source = "Pause.svg";
-                QueueData.Player.player.Play();
+                await CrossMediaManager.Current.Play();
 
                 
 

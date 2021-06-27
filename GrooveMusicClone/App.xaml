@@ -1,11 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Application xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             x:Class="GrooveMusicClone.App">
+<Application
+    x:Class="GrooveMusicClone.App"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
     <Application.Resources>
-
+        <Style ApplyToDerivedTypes="True" TargetType="ContentPage">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Dark=Black, Light=White, Default=White}" />
+        </Style>
+        <Style ApplyToDerivedTypes="True" TargetType="Label">
+            <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black, Default=Black}" />
+            <Setter Property="FontFamily" Value="OpenSans-Regular" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style TargetType="Slider">
+            <Setter Property="MaximumTrackColor" Value="#DCDCDC" />
+            <Setter Property="MinimumTrackColor" Value="{AppThemeBinding Light=Black, Dark=White, Default=Black}" />
+            <Setter Property="ThumbColor" Value="{AppThemeBinding Light=Black, Dark=White, Default=Black}" />
+        </Style>
+        <Style TargetType="ImageButton">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="Padding" Value="14" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="HeightRequest" Value="40" />
+            <Setter Property="WidthRequest" Value="40" />
+        </Style>
     </Application.Resources>
 </Application>

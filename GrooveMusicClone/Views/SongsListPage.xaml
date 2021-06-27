@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="GrooveMusicClone.Views.SongsListPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+    xmlns:models="clr-namespace:GrooveMusicClone.Models"
+    xmlns:viewmodels="clr-namespace:GrooveMusicClone.ViewModels"
+    xmlns:views="clr-namespace:GrooveMusicClone.Views"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+    x:Name="MainContent"
+    Title="All Songs"
+    x:DataType="viewmodels:SongsListViewModel"
+    NavigationPage.HasNavigationBar="False">
+    <ContentPage.Content>
+        <Grid RowDefinitions="Auto,Auto,*,Auto">
+            <StackLayout Padding="15,10,15,0" Orientation="Horizontal">
+                <Label
+                    FontFamily="OpenSans-Regular"
+                    Text="Refine : "
+                    TextColor="White" />
+                <Label
+                    FontFamily="OpenSans-Regular"
+                    Text="Date Added"
+                    TextColor="Green" />
+            </StackLayout>
+            <StackLayout
+                Grid.Row="1"
+                Padding="15,5,15,5"
+                Orientation="Horizontal"
+                Spacing="10">
+                <forms:CachedImage HeightRequest="10" Source="musicplayer.png" />
+                <Label
+                    FontFamily="OpenSans-Regular"
+                    Text="Shuffle All"
+                    TextColor="White" />
+            </StackLayout>
+            <CollectionView
+                x:Name="MainCollectionView"
+                Grid.Row="2"
+                Margin="15,5,15,0"
+                ItemsSource="{Binding AllSongs}"
+                SelectionChanged="MainCollectionView_SelectionChanged"
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Grid
+                            Padding="0,10,0,10"
+                            x:DataType="models:Song"
+                            BackgroundColor="Black"
+                            ColumnSpacing="10">
+                            <Grid.Behaviors>
+                                <xct:AnimationBehavior Command="{Binding Source={x:Reference MainContent}, Path=BindingContext.PlaySong}" CommandParameter="{Binding .}">
+                                    <xct:AnimationBehavior.AnimationType>
+                                        <xct:FadeAnimation Duration="100" />
+                                    </xct:AnimationBehavior.AnimationType>
+                                </xct:AnimationBehavior>
+                            </Grid.Behaviors>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="7*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                FontFamily="OpenSans-Regular"
+                                Text="{Binding Title}"
+                                TextColor="White" />
+                            <ScrollView
+                                x:Name="MainScrollView"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Orientation="Horizontal">
+                                <StackLayout Orientation="Horizontal">
+                                    <Label
+                                        x:Name="Lab1"
+                                        FontFamily="OpenSans-Regular"
+                                        Text="{Binding Album}"
+                                        TextColor="White" />
+                                    <Label
+                                        FontFamily="OpenSans-Regular"
+                                        Text="  -  "
+                                        TextColor="White" />
+                                    <Label
+                                        x:Name="Lab2"
+                                        FontFamily="OpenSans-Regular"
+                                        Text="{Binding Artist}"
+                                        TextColor="White" />
+                                </StackLayout>
+                            </ScrollView>
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="1"
+                                FontFamily="OpenSans-Regular"
+                                Text="{Binding Duration}"
+                                TextColor="White"
+                                VerticalOptions="Center" />
+                            <!--<Image Source="{Binding imageSource}" />-->
+                        </Grid>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <views:ControlsView Grid.Row="3" IsOnPlayer="False" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
