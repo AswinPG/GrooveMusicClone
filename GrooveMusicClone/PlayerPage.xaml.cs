@@ -2,6 +2,7 @@
 using Plugin.SimpleAudioPlayer;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace GrooveMusicClone
         Stopwatch stopwatch { get; set; }
 
 
-        public PlayerPage(int songindex, List<Song> songList)
+        public PlayerPage(int songindex, ObservableCollection<Song> songList)
         {
             InitializeComponent();
             //PauseSkip = false;
@@ -73,8 +74,8 @@ namespace GrooveMusicClone
             PlayingTitle = song.Title;
             AlbumLabel.Text = song.Album;
             ArtistLabel.Text = song.Artist;
-            TotalLabel.Text = song.Duration;
-            TotTime = song.Duration;
+            TotalLabel.Text = song.Duration.ToString();
+            TotTime = song.Duration.ToString();
             QueueData.Player = this;
             QueueData.CurrentList = Songs;
             player = QueueData.player;
@@ -215,8 +216,8 @@ namespace GrooveMusicClone
             PlayingTitle = song.Title;
             AlbumLabel.Text = song.Album;
             ArtistLabel.Text = song.Artist;
-            TotalLabel.Text = song.Duration;
-            TotTime = song.Duration;
+            TotalLabel.Text = song.Duration.ToString();
+            TotTime = song.Duration.ToString();
             try
             {
                 PreviousSong = Songs[path - 1];

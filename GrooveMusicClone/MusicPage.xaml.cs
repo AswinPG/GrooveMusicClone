@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Collections.ObjectModel;
 
 namespace GrooveMusicClone
 {
@@ -20,13 +21,15 @@ namespace GrooveMusicClone
         private double posval = 0;
         PermissionStatus status;
         PermissionStatus status2;
-        List<Song> songs { get; set; }
+        IPlaylistManager playlistManager;
+        ObservableCollection<Song> songs { get; set; }
         public MusicPage()
         {
             InitializeComponent();
+            playlistManager = DependencyService.Get<IPlaylistManager>();
             QueueData.musicPage = this;
-            songs = new List<Song>() { };
-            
+            songs = new ObservableCollection<Song>() { };
+            MainCollectionView.ItemsSource = songs;
             string path = Path.Combine(FileSystem.AppDataDirectory, "SongsData");
             CheckPermisions(path);
             if (status==PermissionStatus.Granted && status2 == PermissionStatus.Granted)
@@ -49,8 +52,9 @@ namespace GrooveMusicClone
                 try
                 {
                     string jsondata = System.IO.File.ReadAllText(Path.Combine(FileSystem.AppDataDirectory, "SongsData"));
-                    songs = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Song>>(jsondata);
+                    songs = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservableCollection<Song>>(jsondata);
                     MainCollectionView.ItemsSource = songs;
+                    GetData();
                 }
                 catch (Exception t)
                 {
@@ -93,32 +97,34 @@ namespace GrooveMusicClone
             List<string> mylist = (List<string>)DependencyService.Get<IMyfile>().GetFileLocation();
             try
             {
-                string artists = "";
-                songs.Clear();
-                for (int i = 0; i < mylist.Count; i++)
-                {
-                    var tfile = TagLib.File.Create(mylist[i]);
-                    artists = "";
-                    for (int c = 0; c < tfile.Tag.Artists.Count(); c++)
-                    {
-                        artists = artists + tfile.Tag.Artists[c];
-                    }
-                    Song song = new Song(tfile.Tag.Pictures[0].Data.Count)
-                    {
-                        Album = tfile.Tag.Album,
-                        Index = i,
-                        Artist = artists,
-                        Duration = tfile.Properties.Duration.ToString().Substring(4, 4),
-                        Img = tfile.Tag.Pictures[0].Data.ToArray(),
-                        Title = tfile.Tag.Title,
-                        Path = mylist[i]
-                    };
-                    songs.Add(song);
-                }
+                playlistManager.GetAllSongs(songs);
+                //string artists = "";
+                //songs.Clear();
+                //for (int i = 0; i < mylist.Count; i++)
+                //{
+                //    var tfile = TagLib.File.Create(mylist[i]);
+                //    artists = "";
+                //    for (int c = 0; c < tfile.Tag.Artists.Count(); c++)
+                //    {
+                //        artists = artists + tfile.Tag.Artists[c];
+                //    }
+                //    Song song = new Song(tfile.Tag.Pictures[0].Data.Count)
+                //    {
+                //        Album = tfile.Tag.Album,
+                //        Index = i,
+                //        Artist = artists,
+                //        Duration = tfile.Properties.Duration.ToString().Substring(4, 4),
+                //        Img = tfile.Tag.Pictures[0].Data.ToArray(),
+                //        Title = tfile.Tag.Title,
+                //        Path = mylist[i]
+                //    };
+                //    songs.Add(song);
+                //}
 
-                MainCollectionView.ItemsSource = songs;
-                string jsondata = Newtonsoft.Json.JsonConvert.SerializeObject(songs);
-                System.IO.File.WriteAllText(Path.Combine(FileSystem.AppDataDirectory, "SongsData"), jsondata);
+                //MainCollectionView.ItemsSource = songs;
+                //string jsondata = Newtonsoft.Json.JsonConvert.SerializeObject(songs);
+                //System.IO.File.WriteAllText(Path.Combine(FileSystem.AppDataDirectory, "SongsData"), jsondata);
+
 
             }
             catch (Exception t)

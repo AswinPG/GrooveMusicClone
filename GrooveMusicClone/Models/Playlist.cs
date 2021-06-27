@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace GrooveMusicClone.Models
+{
+    public class Playlist
+    {
+        public ulong Id { get; set; }
+
+        public string Title { get; set; }
+
+        public IList<Song> Songs { get; set; }
+
+        public bool IsDynamic { get; set; }
+
+        public DateTime DateModified { get; set; }
+
+        public bool HasArtwork { get { return Artwork != null && !String.IsNullOrEmpty(Artwork.ToString()); } }
+
+        public object Artwork { get; set; }
+
+    }
+}
