@@ -1,4 +1,6 @@
 ﻿using Android.Graphics;
+using GrooveMusicClone.Helpers;
+using GrooveMusicClone.Models;
 using GrooveMusicClone.ViewModels;
 using MediaManager;
 using MediaManager.Playback;
@@ -102,8 +104,17 @@ namespace GrooveMusicClone.Views
             CrossMediaManager.Current.MediaItemChanged += Current_MediaItemChanged;
             CrossMediaManager.Current.PropertyChanged += Current_PropertyChanged;
             CrossMediaManager.Current.PositionChanged += Current_PositionChanged;
+            CrossMediaManager.Current.MediaItemFinished += Current_MediaItemFinished;
             Repeat = CrossMediaManager.Current.RepeatMode;
             Shuffle = CrossMediaManager.Current.ShuffleMode;
+        }
+
+        private async void Current_MediaItemFinished(object sender, MediaManager.Media.MediaItemEventArgs e)
+        {
+            if(Repeat != RepeatMode.One)
+            {
+                await PlayNext();
+            }
         }
 
         private void Current_PositionChanged(object sender, MediaManager.Playback.PositionChangedEventArgs e)
@@ -122,7 +133,7 @@ namespace GrooveMusicClone.Views
                 switch (e.PropertyName)
                 {
                     case "Duration":
-                        Duration = CrossMediaManager.Current.Queue.Current.Duration.ToString().Substring(3, 5);
+                        Duration = CrossMediaManager.Current.Queue.Current?.Duration.ToString().Substring(3, 5);
                         DurationInSeconds = CrossMediaManager.Current.Queue.Current.Duration.TotalSeconds;
                         break;
                 }
@@ -145,11 +156,24 @@ namespace GrooveMusicClone.Views
         }
         async Task PlayNext()
         {
-            bool success = await CrossMediaManager.Current.PlayNext();
+            //bool success = await CrossMediaManager.Current.PlayNext();
+            int index = ObjectsHelper.AllSongs.IndexOf(ObjectsHelper.AllSongs.Find(s => s.Path == ObjectsHelper.CurrentSong.Path)) + 1;
+            if(index < ObjectsHelper.AllSongs.Count)
+            {
+                Song song = ObjectsHelper.AllSongs[index];
+                await CrossMediaManager.Current.Play(song.Path);
+                ObjectsHelper.CurrentSong = song;
+            } 
         }
         async Task PlayPrevious()
         {
-            await CrossMediaManager.Current.PlayPrevious();
+            int index = ObjectsHelper.AllSongs.IndexOf(ObjectsHelper.AllSongs.Find(s => s.Path == ObjectsHelper.CurrentSong.Path)) - 1;
+            if (index >= 0)
+            {
+                Song song = ObjectsHelper.AllSongs[index];
+                await CrossMediaManager.Current.Play(song.Path);
+                ObjectsHelper.CurrentSong = song;
+            }
         }
         void ToggleRepeat()
         {

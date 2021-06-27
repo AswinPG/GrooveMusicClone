@@ -4,6 +4,7 @@ using GrooveMusicClone.ViewModels;
 using MediaManager;
 using MediaManager.Library;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -27,21 +28,25 @@ namespace GrooveMusicClone.ViewModels
         {
             try
             {
-                CrossMediaManager.Current.Queue.Clear();
+                ObjectsHelper.AllSongs = new List<Song>(AllSongs);
+                //List<IMediaItem> mediaItems = new List<IMediaItem>();
+                //CrossMediaManager.Current.Queue.Clear();
+                ////await CrossMediaManager.Current.Play(song.Path);
+                //int index = AllSongs.IndexOf(song);
+                //await Task.Run(() =>
+                //{
+                //    for (int i = index; i < AllSongs.Count; i++)
+                //    {
+                //        mediaItems.Add(new MediaItem(AllSongs[i].Path));
+                //    }
+                //    for (int i = index - 2; i >= 0; i--)
+                //    {
+                //        mediaItems.Add(new MediaItem(AllSongs[i].Path));
+                //    }
+                //});
                 await CrossMediaManager.Current.Play(song.Path);
-                int index = AllSongs.IndexOf(song) + 1;
-                await Task.Run(() =>
-                {
-                    for (int i = index; i < AllSongs.Count; i++)
-                    {
-                        Task.Delay(100);
-                        CrossMediaManager.Current.Queue.Add(new MediaItem(AllSongs[i].Path));
-                    }
-                    for (int i = index - 2; i >= 0; i--)
-                    {
-                        CrossMediaManager.Current.Queue.Add(new MediaItem(AllSongs[i].Path));
-                    }
-                });
+                
+                ObjectsHelper.CurrentSong = song;
             }
             catch(Exception h)
             {

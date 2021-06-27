@@ -13,10 +13,15 @@ namespace GrooveMusicClone.Helpers
         public static IPlaylistManager playlistManager;
         public static ControlsViewModel Controller;
         public static List<Song> AllSongs;
+        public static Song CurrentSong;
         public static void InitObjects()
         {
             playlistManager = DependencyService.Get<IPlaylistManager>();
             Controller = new ControlsViewModel();
+        }
+        public static void Shuffle()
+        {
+
         }
         
     }
